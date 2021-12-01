@@ -35,15 +35,16 @@ public class DatabaseService {
     }
 
 
-   public static City getCity(Connection conn,int idCity) {
+   public static City getCity(Connection conn,int idCity) throws SQLException {
         PreparedStatement pstmt = null;
         City city = new City();
+       ResultSet rs = null;
         try {
 
             String sql = "SELECT * FROM City where idCity=?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1,idCity);
-            ResultSet rs = pstmt.executeQuery();
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                 city.setIdCity(rs.getInt("idCity"));
                 city.setName(rs.getString("name"));
@@ -55,10 +56,17 @@ public class DatabaseService {
         } catch (SQLException se) {
             se.printStackTrace();
         } finally {
-            try {
+            try{
+                if(rs!=null){
+                    rs.close();
+                }
+            }finally {
                 if (pstmt != null) pstmt.close();
-            } catch (SQLException se2) {
             }
+//            try {
+//                if (pstmt != null) pstmt.close();
+//            } catch (SQLException se2) {
+//            }
         }
         return  city;
     }
